@@ -1,0 +1,175 @@
+<odoo>
+    <data>
+        <record id="view_hd_team_form" model="ir.ui.view">
+            <field name="name">view.hd.team.form</field>
+            <field name="model">hd.team</field>
+            <field name="arch" type="xml">
+                <form string="Teams">
+                    <sheet>
+                        <group>
+
+                            <field name="name"/>
+                            <field name="help_desk_manager_id"/>
+                            <field name="team_leader_id"/>
+                            <field name="member_ids" widget="many2many_tags" options="{'color_field': 'color'}"
+                                   class="mt16"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="view_hd_team_tree" model="ir.ui.view">
+            <field name="name">view.hd.team.tree</field>
+            <field name="model">hd.team</field>
+            <field name="arch" type="xml">
+                <tree string="">
+                    <field name="name"/>
+                    <field name="help_desk_manager_id"/>
+                    <field name="team_leader_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_hd_team_view" model="ir.actions.act_window">
+            <field name="name">Help Desk Action</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hd.team</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <!--      Ticket Model-->
+        <record id="view_hd_ticket_form" model="ir.ui.view">
+            <field name="name">view.hd.ticket.form</field>
+            <field name="model">hd.ticket</field>
+            <field name="arch" type="xml">
+                <form string="Ticket">
+                    <header>
+                        <field name="state" widget="statusbar" statusbar_visible="new,inprogress,solved,cancelled"/>
+                        <button name="action_inprogress" string="In progress" type="object"
+                                attrs="{'invisible': [('state', '!=', 'new')]}"/>
+                        <button name="action_solved" string="Solved" type="object"
+                                attrs="{'invisible': [('state', '!=', 'inprogress')]}"/>
+                        <button name="action_canelled" string="Canecl" type="object" state="new,inprogress,solved"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="ticket_id"/>
+                                <field name="state" invisible="1"/>
+                                <field name="customer_id" attrs="{'readonly': [('state', 'in', ('solved','cancelled'))]}"/>
+                                <field name="customer_name"/>
+                                <field name="customer_email"/>
+                                <field name="customer_phone"/>
+                                <field name="tag_ids" widget="many2many_tags"/>
+                                <field name="time_submitted"/>
+                                <field name="description" attrs="{'readonly': [('state', 'in', ('solved','cancelled'))]}"/>
+                                <field name="hosting_type" attrs="{'readonly': [('state', 'in', ('solved','cancelled'))]}"/>
+                                <field name="server_url"
+                                            attrs="{'invisible':[('hosting_type', '!=', 'cloud')],'required':[('hosting_type', '=', 'cloud')],
+                                            'readonly': [('state', 'in', ('solved','cancelled'))]}"/>
+                            </group>
+                            <group>
+                                <field name="team_id" attrs="{'readonly': [('state', 'in', ('solved','cancelled'))]}"/>
+                                <field name="assign_to_id" attrs="{'readonly': [('state', 'in', ('solved','cancelled'))]}"/>
+                                <field name="priority" attrs="{'readonly': [('state', 'in', ('solved','cancelled'))]}"/>
+                                <field name="solved_date"/>
+                                <field name="resolution"/>
+                            </group>
+                        </group>
+                    </sheet>
+                        <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                        <field name="activity_ids" widget="mail_activity"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_hd_ticket_tree" model="ir.ui.view">
+            <field name="name">view.hd.ticke.tree</field>
+            <field name="model">hd.ticket</field>
+            <field name="arch" type="xml">
+                <tree string="Tickets">
+<!--                    colors="red:state=='inprogress';green:state=='solved';blue:state=='new';yellow:state=='cancelled'"-->
+                    <field name="ticket_id"/>
+                    <field name="customer_name"/>
+                    <field name="time_submitted"/>
+                    <field name="team_id"/>
+                    <field name="assign_to_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_hd_ticket_view" model="ir.actions.act_window">
+            <field name="name">Tickets</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hd.ticket</field>
+            <field name="view_mode">tree,form,kanban</field>
+        </record>
+
+        <record id="action_hd_my_ticket_view" model="ir.actions.act_window">
+            <field name="name">My Tickets</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hd.ticket</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="domain">[('user_id','=',user_id.id)]</field>
+        </record>
+
+
+        <!--        End of ticket Model -->
+
+        <!--        Tags Model-->
+        <record id="view_tag_tag_form" model="ir.ui.view">
+            <field name="name">view.tag.tag.form</field>
+            <field name="model">tag.tag</field>
+            <field name="arch" type="xml">
+                <form string="Tags">
+                    <sheet>
+                        <group>
+                            <field name="tag"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_tag_tag_tree" model="ir.ui.view">
+            <field name="name">view.tag.tag.tree</field>
+            <field name="model">tag.tag</field>
+            <field name="arch" type="xml">
+                <tree string="Tags">
+                    <field name="tag"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_tag_tag_view" model="ir.actions.act_window">
+            <field name="name">Tags</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">tag.tag</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                  Create your Tags
+              </p>
+            </field>
+        </record>
+
+        <!--      ####################################################-->
+
+        <menuitem name="Help Desk" id="help_desk_root" sequence="0"/>
+        <menuitem name="Configration" id="help_desk_configraton" parent="help_desk_root" sequence="2"/>
+        <menuitem name="Teams" id="help_desk_team" parent="help_desk_configraton" action="action_hd_team_view"/>
+        <menuitem name="Tags" id="help_desk_tags" parent="help_desk_configraton" action="action_tag_tag_view"/>
+        <menuitem name="Ticket" id="help_desk_ticket" parent="help_desk_root" sequence="1"/>
+        <menuitem name="All Tickets" id="help_desk_ticket_child" parent="help_desk_ticket" action="action_hd_ticket_view"/>
+        <menuitem name="My Tickets" id="help_desk_my_ticket_child" parent="help_desk_ticket" action="action_hd_my_ticket_view"/>
+
+
+    </data>
+</odoo>
